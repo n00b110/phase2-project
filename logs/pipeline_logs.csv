@@ -1,0 +1,13 @@
+timestamp,team,user,query_name,latency_ms,rows_returned,error
+2026-02-17T06:38:13.376708,TeamX,Tester,Q1: Team x Category stats,37700,0,
+2026-02-17T06:43:48.844226,TeamX,StudentName,SELECT * FROM EVENTS,17108,10,
+2026-02-17T06:46:03.021064,TeamX,StudentName,Q1: Team × Category stats,268,5,
+2026-02-17T06:46:14.157806,TeamX,StudentName,Q1: Team × Category stats,152,5,
+2026-02-17T06:46:23.122325,TeamX,StudentName,Q2: Category last 24h,265,0,
+2026-02-17T06:46:30.405849,TeamX,StudentName,Q3: Join users × events,1310,7,
+2026-02-17T06:48:28.288450,TeamX,StudentName,UPDATE USERS,0,0,
+2026-02-17T06:50:15.900484,TeamX,StudentName,UPDATE USERS,0,4,
+2026-02-17T06:50:38.555831,TeamX,StudentName,UPDATE USERS,0,4,
+2026-02-17T06:51:06.526990,TeamX,StudentName,UPDATE USERS,0,2,
+2026-02-17T06:53:30.832922,TeamX,StudentName,Q3: Join users × events,365,7,
+2026-02-17T06:53:41.749972,TeamX,StudentName,SELECT * FROM EVENTS,250,10,
