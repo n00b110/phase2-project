@@ -1,8 +1,9 @@
-###Multimodal Statistical Learning RAG System
-
+# Multimodal Statistical Learning RAG System  
 CS 5542 – Phase 2 Project
 
-Project Overview
+---
+
+## Project Overview
 
 This project implements a multimodal Retrieval-Augmented Generation (RAG) system based on lecture materials from COMP-SCI-5565: Introduction to Statistical Learning.
 
@@ -10,7 +11,9 @@ The goal of the system is to retrieve relevant information from course lecture P
 
 The project builds on Labs 1–5 completed throughout the semester.
 
-System Architecture
+---
+
+## System Architecture
 
 The system follows this overall flow:
 
@@ -18,168 +21,146 @@ Data Sources → Multimodal Knowledge Base → Hybrid Retrieval Pipeline → Sno
 
 The implementation builds progressively on earlier labs:
 
-Lab 1: Embeddings and similarity search
+- Lab 1: Embeddings and similarity search  
+- Lab 2: Advanced RAG (chunking and dense retrieval)  
+- Lab 3: Multimodal retrieval and hybrid scoring  
+- Lab 4: Streamlit application integration  
+- Lab 5: Snowflake data pipeline  
 
-Lab 2: Advanced RAG (chunking and dense retrieval)
+---
 
-Lab 3: Multimodal retrieval and hybrid scoring
-
-Lab 4: Streamlit application integration
-
-Lab 5: Snowflake data pipeline
-
-Dataset
+## Dataset
 
 The knowledge base includes both text and image data.
 
-PDFs (data/pdfs/)
+### PDFs (`data/pdfs/`)
 
 Nine lecture documents covering major topics in statistical learning, including:
 
-Linear Regression
-
-Classification
-
-Resampling Methods
-
-Regularization
-
-Tree-Based Methods
-
-Support Vector Machines
-
-Unsupervised Learning
-
-Deep Learning
+- Linear Regression  
+- Classification  
+- Resampling Methods  
+- Regularization  
+- Tree-Based Methods  
+- Support Vector Machines  
+- Unsupervised Learning  
+- Deep Learning  
 
 These documents are used for text extraction, chunking, embedding generation, and retrieval.
 
-Images (data/images/)
+### Images (`data/images/`)
 
 The dataset also includes several machine learning-related diagrams such as:
 
-Regression visualizations
-
-Optimization update diagrams
-
-Model comparison examples
-
-Regression loss surface visualizations
+- Regression visualizations  
+- Optimization update diagrams  
+- Model comparison examples  
+- Regression loss surface visualizations  
 
 Images are processed using descriptive filenames, OCR extraction (Tesseract), and TF-IDF indexing.
 
 No sampling was performed. All available materials were included to preserve full coverage of the course content.
 
-Retrieval Pipeline
-Chunking
+---
+
+## Retrieval Pipeline
+
+### Chunking
 
 Two chunking strategies are implemented:
 
-Fixed-size chunking (1200 characters with 200-character overlap)
-
-Semantic paragraph-based chunking
+- Fixed-size chunking (1200 characters with 200-character overlap)  
+- Semantic paragraph-based chunking  
 
 This allows comparison of how chunk structure affects retrieval performance.
 
-Dense Retrieval
+### Dense Retrieval
 
-SentenceTransformer model: all-MiniLM-L6-v2
-
-FAISS vector index
+- SentenceTransformer model: `all-MiniLM-L6-v2`  
+- FAISS vector index  
 
 Dense retrieval captures semantic similarity between queries and document chunks.
 
-Sparse Retrieval
+### Sparse Retrieval
 
-BM25 keyword-based ranking
+- BM25 keyword-based ranking  
 
 Sparse retrieval helps capture exact term matches.
 
-Image Retrieval
+### Image Retrieval
 
-TF-IDF indexing on image captions and OCR-extracted text
+- TF-IDF indexing on image captions and OCR-extracted text  
 
-Hybrid Fusion
+### Hybrid Fusion
 
 Text and image scores are combined using a weighted scoring approach to balance semantic and keyword relevance.
 
-Reranking
+### Reranking
 
-CrossEncoder model: ms-marco-MiniLM-L-6-v2
+- CrossEncoder model: `ms-marco-MiniLM-L-6-v2`  
 
 Reranking refines the final ranking of retrieved results.
 
-Evaluation Metrics
+### Evaluation Metrics
 
 Retrieval performance is evaluated using:
 
-Precision@5
-
-Recall@10
+- Precision@5  
+- Recall@10  
 
 Comparisons are made across chunking strategies and retrieval configurations.
 
-Application
+---
+
+## Application
 
 The system includes a Streamlit interface that:
 
-Accepts user queries
+- Accepts user queries  
+- Displays retrieved text evidence  
+- Displays relevant images when appropriate  
+- Logs query results  
 
-Displays retrieved text evidence
+---
 
-Displays relevant images when appropriate
-
-Logs query results
-
-Snowflake Integration
+## Snowflake Integration
 
 Snowflake is used to support:
 
-Metadata storage
+- Metadata storage  
+- Query logging  
+- Retrieval result tracking  
+- Warehouse-level analysis  
 
-Query logging
+Schema definitions and SQL scripts are located in the `snowflake/` directory.
 
-Retrieval result tracking
+---
 
-Warehouse-level analysis
-
-Schema definitions and SQL scripts are located in the snowflake/ directory.
-
-Reproducibility
+## Reproducibility
 
 To reproduce the system:
+1. Clone the repository  
+2. Install dependencies:
+3. Install Tesseract OCR  
+4. Run ingestion and index-building scripts  
+5. Launch the Streamlit application:
 
-Clone the repository
-
-Install dependencies:
-
-pip install -r requirements.txt
-
-Install Tesseract OCR
-
-Run ingestion and index-building scripts
-
-Launch the Streamlit application:
-
-streamlit run application/app.py
 
 All models and configuration settings are included in the repository.
 
-Repository Structure
+---
+
+## Repository Structure
 data/
-   pdfs/
-   images/
+pdfs/
+images/
+
 ingestion/
 retrieval/
 application/
 snowflake/
 reproducibility/
 docs/
+CONTRIBUTIONS.md
 
-Team Members: Ibrahim Alborno and Immanuel
-
-(Add team member names here)
-
-Contributions
-
-See CONTRIBUTIONS.md for individual technical contributions and percentage breakdown.
+Team members:
