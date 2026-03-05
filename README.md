@@ -1,166 +1,239 @@
-# Multimodal Statistical Learning RAG System  
-CS 5542 – Phase 2 Project
+# CS 5542 – Phase 2  
+## Snowflake-Integrated Financial Analytics Pipeline
+
+### Team Members
+- Ibrahim Alborno  
+- Immanuel Olaoye
 
 ---
 
-## Project Overview
+# Project Overview
 
-This project implements a multimodal Retrieval-Augmented Generation (RAG) system based on lecture materials from COMP-SCI-5565: Introduction to Statistical Learning.
+This project implements a fully reproducible end-to-end data analytics pipeline integrating:
 
-The goal of the system is to retrieve relevant information from course lecture PDFs and related machine learning diagrams in response to user queries. The system combines dense retrieval, sparse retrieval, multimodal fusion, reranking, and Snowflake logging into a reproducible end-to-end pipeline.
+**Local Structured Data → Snowflake Data Warehouse → Streamlit Application → Query Logging**
 
-The project builds on Labs 1–5 completed throughout the semester.
+The system demonstrates how structured financial data can be ingested into Snowflake, queried using SQL, and accessed through an interactive Streamlit interface.
 
----
-
-## System Architecture
-
-The system follows this overall flow:
-
-Data Sources → Multimodal Knowledge Base → Hybrid Retrieval Pipeline → Snowflake → Streamlit Application
-
-The implementation builds progressively on earlier labs:
-
-- Lab 1: Embeddings and similarity search  
-- Lab 2: Advanced RAG (chunking and dense retrieval)  
-- Lab 3: Multimodal retrieval and hybrid scoring  
-- Lab 4: Streamlit application integration  
-- Lab 5: Snowflake data pipeline  
+The dataset used in this project is historical Toyota stock price data (1980–2026), stored locally as a CSV file and loaded into Snowflake for warehouse-level analytics.
 
 ---
 
-## Dataset
+# Repository Structure
 
-The knowledge base includes both text and image data.
-
-### PDFs (`data/pdfs/`)
-
-Nine lecture documents covering major topics in statistical learning, including:
-
-- Linear Regression  
-- Classification  
-- Resampling Methods  
-- Regularization  
-- Tree-Based Methods  
-- Support Vector Machines  
-- Unsupervised Learning  
-- Deep Learning  
-
-These documents are used for text extraction, chunking, embedding generation, and retrieval.
-
-### Images (`data/images/`)
-
-The dataset also includes several machine learning-related diagrams such as:
-
-- Regression visualizations  
-- Optimization update diagrams  
-- Model comparison examples  
-- Regression loss surface visualizations  
-
-Images are processed using descriptive filenames, OCR extraction (Tesseract), and TF-IDF indexing.
-
-No sampling was performed. All available materials were included to preserve full coverage of the course content.
+```
+phase2-project-main_2/
+│
+├── data/
+│   └── Toyota_Stock_Prices_1980_2026.csv
+│
+├── logs/
+│   └── pipeline_logs.csv
+│
+├── notebooks/
+│   └── week5_snowflake_pipeline.ipynb
+│
+├── scripts/
+│   ├── load_local_csv_to_stage.py
+│   └── sf_connect.py
+│
+├── sql/
+│   ├── 01_create_schema.sql
+│   ├── 02_stage_and_load.sql
+│   └── 03_queries.sql
+│
+├── streamlit_app.py
+├── build_chunks.py
+├── requirements.txt
+├── CONTRIBUTIONS.md
+└── README.md
+```
 
 ---
 
-## Retrieval Pipeline
+# Dataset Description
 
-### Chunking
+**Dataset:** Toyota Stock Prices (1980–2026)  
+**Format:** CSV (Structured Tabular Data)
 
-Two chunking strategies are implemented:
+The dataset includes:
 
-- Fixed-size chunking (1200 characters with 200-character overlap)  
-- Semantic paragraph-based chunking  
+- Date  
+- Open Price  
+- High Price  
+- Low Price  
+- Close Price  
+- Volume  
 
-This allows comparison of how chunk structure affects retrieval performance.
+This structured dataset supports time-series analysis and warehouse-driven analytics.
 
-### Dense Retrieval
+The dataset is stored in:
 
-- SentenceTransformer model: `all-MiniLM-L6-v2`  
-- FAISS vector index  
-
-Dense retrieval captures semantic similarity between queries and document chunks.
-
-### Sparse Retrieval
-
-- BM25 keyword-based ranking  
-
-Sparse retrieval helps capture exact term matches.
-
-### Image Retrieval
-
-- TF-IDF indexing on image captions and OCR-extracted text  
-
-### Hybrid Fusion
-
-Text and image scores are combined using a weighted scoring approach to balance semantic and keyword relevance.
-
-### Reranking
-
-- CrossEncoder model: `ms-marco-MiniLM-L-6-v2`  
-
-Reranking refines the final ranking of retrieved results.
-
-### Evaluation Metrics
-
-Retrieval performance is evaluated using:
-
-- Precision@5  
-- Recall@10  
-
-Comparisons are made across chunking strategies and retrieval configurations.
+```
+data/Toyota_Stock_Prices_1980_2026.csv
+```
 
 ---
 
-## Application
+# Snowflake Data Pipeline
 
-The system includes a Streamlit interface that:
+The project implements a reproducible Snowflake ingestion workflow:
 
-- Accepts user queries  
-- Displays retrieved text evidence  
-- Displays relevant images when appropriate  
-- Logs query results  
+1. Create database and schema  
+2. Create structured stock price table  
+3. Stage CSV data  
+4. Load staged data into Snowflake  
+5. Execute analytical queries  
 
----
+SQL scripts are located in the `sql/` directory:
 
-## Snowflake Integration
-
-Snowflake is used to support:
-
-- Metadata storage  
-- Query logging  
-- Retrieval result tracking  
-- Warehouse-level analysis  
-
-Schema definitions and SQL scripts are located in the `snowflake/` directory.
+- `01_create_schema.sql` – Creates database, schema, and tables  
+- `02_stage_and_load.sql` – Creates stage and loads CSV data  
+- `03_queries.sql` – Example analytical queries  
 
 ---
 
-## Reproducibility
+# Application Integration
 
-To reproduce the system:
-1. Clone the repository  
-2. Install dependencies:
-3. Install Tesseract OCR  
-4. Run ingestion and index-building scripts  
-5. Launch the Streamlit application:
+The project includes a Streamlit-based application:
 
+```
+streamlit_app.py
+```
 
-All models and configuration settings are included in the repository.
+The application:
+
+- Connects to Snowflake  
+- Executes analytical SQL queries  
+- Displays stock price data  
+- Logs query activity  
+
+User queries and results are recorded in:
+
+```
+logs/pipeline_logs.csv
+```
+
+This ensures traceability and reproducibility of application interactions.
 
 ---
 
-## Repository Structure
-data/
-pdfs/
-images/
+# System Architecture
 
-ingestion/
-retrieval/
-application/
-snowflake/
-reproducibility/
-docs/
-CONTRIBUTIONS.md
+Pipeline Flow:
 
-Team members:
+Local CSV Data  
+↓  
+Snowflake Stage  
+↓  
+Snowflake Tables  
+↓  
+SQL Analytics  
+↓  
+Streamlit Application  
+↓  
+Query Logging  
+
+This architecture separates ingestion, warehousing, analytics, and user interaction layers.
+
+---
+
+# Reproducibility Instructions
+
+## 1. Clone the Repository
+
+```bash
+git clone <repository-url>
+cd phase2-project-main_2
+```
+
+---
+
+## 2. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## 3. Configure Snowflake Credentials
+
+Update your Snowflake credentials inside:
+
+```
+scripts/sf_connect.py
+```
+
+---
+
+## 4. Run Snowflake Schema & Ingestion Scripts
+
+Execute the following SQL files inside Snowflake (via Snowsight or SnowSQL):
+
+1. `01_create_schema.sql`
+2. `02_stage_and_load.sql`
+
+This will:
+
+- Create database and tables
+- Stage the CSV file
+- Load the data into Snowflake
+
+---
+
+## 5. Launch the Streamlit Application
+
+```bash
+streamlit run streamlit_app.py
+```
+
+The application will connect to Snowflake and allow interactive querying.
+
+---
+
+# Dependencies
+
+Core libraries include:
+
+- streamlit  
+- snowflake-connector-python  
+- pandas  
+- numpy  
+
+All required libraries are listed in `requirements.txt`.
+
+---
+
+# Reproducibility Notes
+
+- All SQL scripts required for schema creation and ingestion are included.
+- The dataset is stored locally under `data/`.
+- Logging ensures traceability of executed queries.
+- The entire pipeline can be reproduced from ingestion to application.
+
+---
+
+# Contribution Transparency
+
+See `CONTRIBUTIONS.md` for a detailed breakdown of responsibilities.
+
+Contribution split:
+
+- Ibrahim Alborno – 50%  
+- Immanuel Olaoye – 50%  
+
+Total: 100%
+
+---
+
+# Phase 2 Deliverables Included
+
+- Snowflake schema scripts  
+- Data ingestion pipeline  
+- Streamlit application prototype  
+- Query logging system  
+- Reproducibility instructions  
+- Contribution documentation  
+
+This repository represents a fully reproducible Snowflake-integrated analytics pipeline built as part of CS 5542 Phase 2.
