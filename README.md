@@ -1,64 +1,166 @@
-# CS 5542 — Week 5 Snowflake Integration Starter
+# Multimodal Statistical Learning RAG System  
+CS 5542 – Phase 2 Project
 
-This starter kit provides a minimal, reproducible **Data → Snowflake → Query → App → Logging** pipeline.
+---
 
-## Repo Layout
-- `sql/`: schema, staging/loading, and query examples
-- `scripts/`: connection + local CSV → stage → COPY loader
-- `app/`: Streamlit dashboard connected to Snowflake
-- `data/`: sample CSVs (replace with your project subset)
-- `logs/`: pipeline usage logs
-- `CONTRIBUTIONS.md`: individual accountability
+## Project Overview
 
-## Week 5 Scope (≈50%)
-Fill in what you included vs deferred.
+This project implements a multimodal Retrieval-Augmented Generation (RAG) system based on lecture materials from COMP-SCI-5565: Introduction to Statistical Learning.
 
-| Item | Included this week | Deferred |
-|---|---|---|
-| Dataset(s) |  |  |
-| Feature(s) |  |  |
+The goal of the system is to retrieve relevant information from course lecture PDFs and related machine learning diagrams in response to user queries. The system combines dense retrieval, sparse retrieval, multimodal fusion, reranking, and Snowflake logging into a reproducible end-to-end pipeline.
 
-## End-to-End Flow
-```mermaid
-flowchart LR
-A[Data Source] --> B[Snowflake Stage + COPY / Snowpark]
-B --> C[Tables + Views]
-C --> D[Queries]
-D --> E[Streamlit Dashboard]
-E --> F[Monitoring Logs]
-```
+The project builds on Labs 1–5 completed throughout the semester.
 
-## Setup
-1) Create `.env` from `.env.example` and fill your Snowflake values.
-2) Install dependencies:
-```bash
-pip install -r requirements.txt
-```
+---
 
-## Snowflake SQL Setup
-Run these scripts in a Snowflake Worksheet (in order):
-- `sql/01_create_schema.sql`
-- `sql/02_stage_and_load.sql`
+## System Architecture
 
-## Load Data (example)
-This script uploads a local CSV to an internal stage and loads it into a table.
-```bash
-python scripts/load_local_csv_to_stage.py data/events.csv EVENTS
-python scripts/load_local_csv_to_stage.py data/users.csv USERS
-```
+The system follows this overall flow:
 
-## Run App
-```bash
-streamlit run app/streamlit_app.py
-```
+Data Sources → Multimodal Knowledge Base → Hybrid Retrieval Pipeline → Snowflake → Streamlit Application
 
-## Extensions Completed
-- Extension 1:
-- Extension 2:
-- Extension 3: (if applicable)
+The implementation builds progressively on earlier labs:
 
-## Demo Video Link
-- 
+- Lab 1: Embeddings and similarity search  
+- Lab 2: Advanced RAG (chunking and dense retrieval)  
+- Lab 3: Multimodal retrieval and hybrid scoring  
+- Lab 4: Streamlit application integration  
+- Lab 5: Snowflake data pipeline  
 
-## Notes / Bottlenecks
-- 
+---
+
+## Dataset
+
+The knowledge base includes both text and image data.
+
+### PDFs (`data/pdfs/`)
+
+Nine lecture documents covering major topics in statistical learning, including:
+
+- Linear Regression  
+- Classification  
+- Resampling Methods  
+- Regularization  
+- Tree-Based Methods  
+- Support Vector Machines  
+- Unsupervised Learning  
+- Deep Learning  
+
+These documents are used for text extraction, chunking, embedding generation, and retrieval.
+
+### Images (`data/images/`)
+
+The dataset also includes several machine learning-related diagrams such as:
+
+- Regression visualizations  
+- Optimization update diagrams  
+- Model comparison examples  
+- Regression loss surface visualizations  
+
+Images are processed using descriptive filenames, OCR extraction (Tesseract), and TF-IDF indexing.
+
+No sampling was performed. All available materials were included to preserve full coverage of the course content.
+
+---
+
+## Retrieval Pipeline
+
+### Chunking
+
+Two chunking strategies are implemented:
+
+- Fixed-size chunking (1200 characters with 200-character overlap)  
+- Semantic paragraph-based chunking  
+
+This allows comparison of how chunk structure affects retrieval performance.
+
+### Dense Retrieval
+
+- SentenceTransformer model: `all-MiniLM-L6-v2`  
+- FAISS vector index  
+
+Dense retrieval captures semantic similarity between queries and document chunks.
+
+### Sparse Retrieval
+
+- BM25 keyword-based ranking  
+
+Sparse retrieval helps capture exact term matches.
+
+### Image Retrieval
+
+- TF-IDF indexing on image captions and OCR-extracted text  
+
+### Hybrid Fusion
+
+Text and image scores are combined using a weighted scoring approach to balance semantic and keyword relevance.
+
+### Reranking
+
+- CrossEncoder model: `ms-marco-MiniLM-L-6-v2`  
+
+Reranking refines the final ranking of retrieved results.
+
+### Evaluation Metrics
+
+Retrieval performance is evaluated using:
+
+- Precision@5  
+- Recall@10  
+
+Comparisons are made across chunking strategies and retrieval configurations.
+
+---
+
+## Application
+
+The system includes a Streamlit interface that:
+
+- Accepts user queries  
+- Displays retrieved text evidence  
+- Displays relevant images when appropriate  
+- Logs query results  
+
+---
+
+## Snowflake Integration
+
+Snowflake is used to support:
+
+- Metadata storage  
+- Query logging  
+- Retrieval result tracking  
+- Warehouse-level analysis  
+
+Schema definitions and SQL scripts are located in the `snowflake/` directory.
+
+---
+
+## Reproducibility
+
+To reproduce the system:
+1. Clone the repository  
+2. Install dependencies:
+3. Install Tesseract OCR  
+4. Run ingestion and index-building scripts  
+5. Launch the Streamlit application:
+
+
+All models and configuration settings are included in the repository.
+
+---
+
+## Repository Structure
+data/
+pdfs/
+images/
+
+ingestion/
+retrieval/
+application/
+snowflake/
+reproducibility/
+docs/
+CONTRIBUTIONS.md
+
+Team members:
